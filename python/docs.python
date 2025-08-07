@@ -1,0 +1,534 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+OpenAPI设计文档生成器 - 正式版 v2.3
+最后更新：2025-03-17 17:45
+"""
+
+import json
+import argparse
+import re
+import os  # 添加os模块导入
+from jinja2 import Environment, FileSystemLoader
+import pymysql
+
+# 要过滤的参数列表
+FILTER_PARAMS = ['countId', 'optimizeJoinOfCountSql', 'searchCount', 'maxLimit', 'pages',"optimizeCountSql"]
+
+# ==================== 全局配置 ====================
+TYPE_MAPPING = {
+    "object": {
+        "DateInterval": {
+            "description": "时间区间",
+            "child_fields": ["begin", "end"]
+        },
+        "GeoPoint": {
+            "description": "地理坐标",
+            "child_fields": ["latitude", "longitude"]
+        }
+    }
+}
+
+DESIGN_TEMPLATE = """{# 使用减号控制空白字符 -#}
+# {{ title }}
+
+[TOC]
+
+| **软件** | **软件版本** | **基线名称** |
+| -------- | ------------ | ------------ |
+| US       | 1.0          |              |
+
+
+
+# **研发中心**
+
+# **{{ title }}**
+
+| **参考文档** |          |      |
+| ------------ | -------- | ---- |
+| 序号         | 文档名称 | 链接 |
+|              |          |      |
+|              |          |      |
+|              |          |      |
+
+
+## **1.业务说明**
+
+### 1.1功能概述
+
+{{ function_summary }}
+
+### 1.2非功能概述
+
+## 2.接口说明
+{% for api_info in api_infos %}
+
+
+### **2.{{ loop.index }}** {{ api_info.summary }}
+
+url:{{ api_info.url }}
+
+### 请求
+
+| 序号 | 字段名 | 字段描述 | 类型 | 示例 | 备注 |
+| :--- | :----- | :------- | :--- | :--- | :--- |
+{% for param in api_info.request_params %}
+| {{ loop.index }} | `{{ param.name }}` | {{ param.description }} | {{ param.type }} | `{{ param.example }}` |  |
+{% endfor %}
+
+### 正常响应
+
+| 序号 | 字段名 | 字段描述 | 类型 | 示例 | 备注 |
+| :--- | :----- | :------- | :--- | :--- | :--- |
+{% for param in api_info.response_params %}
+| {{ loop.index }} | `{{ param.name }}` | {{ param.description }} | {{ param.type }} | `{{ param.example }}` |  |
+{% endfor %}
+
+### **异常响应**
+
+| **序号** | **字段名** | **字段描述**                 | **类型** | **示例** | **备注** |
+| -------- | ---------- | ---------------------------- | -------- | -------- | -------- |
+| 1        | `code`     | 结果编码                     | integer  | ``       |          |
+| 2        | `msg`      | 错误信息                     | string   | ``       |          |
+| 3        | `data`    | 数据内容  | JSON  | ``       |          |
+{% endfor %}
+
+## 3.数据存储结构
+{% for table in tables %}
+
+
+### **表: {{ table.name }} - 注释: {{ table.comment }}**
+
+| 序号 | 字段名 | 字段说明 | 字段类型 | 主外键 | 允许为空 | 备注 |
+| ---- | ------ | -------- | -------- | ------ | -------- | ---- |
+{% for column in table.columns %}
+| {{ loop.index }} | `{{ column.name }}` | {{ column.comment }} | {{ column.type }} | {{ column.key }} | {{ column.nullable }} | {{ column.remark }} |
+{% endfor %}
+{% endfor %}
+"""
+
+# 解析 SQL 文件，提取表结构信息
+def parse_sql_file(host, port, user, password, db):
+    try:
+        # 连接MySQL数据库
+        connection = pymysql.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            db=db,
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+
+        tables = []
+        with connection.cursor() as cursor:
+            # 获取所有表信息
+            cursor.execute("SHOW TABLES")
+            # 动态获取数据库名称
+            table_key = f"Tables_in_{db}"
+            table_names = [row[table_key] for row in cursor.fetchall()]
+            
+            for table_name in table_names:
+                # 获取表注释
+                cursor.execute(f"SHOW TABLE STATUS WHERE Name = '{table_name}'")
+                table_comment = cursor.fetchone()['Comment']
+
+                # 获取表字段信息
+                cursor.execute(f"SHOW FULL COLUMNS FROM {table_name}")
+                columns = []
+                for column in cursor.fetchall():
+                    columns.append({
+                        "name": column['Field'],
+                        "type": column['Type'],
+                        "key": 'PRIMARY KEY' if column['Key'] == 'PRI' else '',
+                        "nullable": '是' if column['Null'] == 'YES' else '否',
+                        "comment": column['Comment'],
+                        "remark": ""
+                    })
+
+                tables.append({
+                    "name": table_name,
+                    "comment": table_comment,
+                    "columns": columns
+                })
+
+        connection.close()
+
+        # 添加调试信息
+        print(f"解析到的表数量: {len(tables)}")
+        for table in tables:
+            print(f"表名: {table['name']}, 字段数: {len(table['columns'])}")
+
+        return tables
+    except Exception as e:
+        print(f"❌ 数据库连接或查询失败: {str(e)}")
+        return []
+
+# ==================== 核心方法 ====================
+def clean_description(description):
+    """清理描述文本，移除换行符和多余空格
+    
+    Args:
+        description: 原始描述文本
+        
+    Returns:
+        清理后的描述文本
+    """
+    if not description:
+        return ''
+    # 将换行符替换为空格
+    description = description.replace('\n', ' ')
+    # 移除多余的空格
+    description = re.sub(r'\s+', ' ', description)
+    return description.strip()
+
+def parse_schema(schema, components, prefix="", processed_refs=None):
+    """🔍 增强版schema解析（支持类型映射和引用展开）
+    
+    Args:
+        schema: 要解析的schema对象
+        components: OpenAPI组件定义
+        prefix: 当前属性的前缀
+        processed_refs: 已处理的引用集合，用于避免无限递归
+        
+    Returns:
+        解析后的参数列表
+    """
+    # 初始化已处理引用集合
+    if processed_refs is None:
+        processed_refs = set()
+        
+    if isinstance(schema, dict):
+        if '$ref' in schema:
+            ref_path = schema['$ref'].split('/')
+            if len(ref_path) >= 4 and ref_path[2] == 'schemas':
+                schema_name = ref_path[-1]
+                # 检查是否已经处理过这个引用
+                if schema_name in processed_refs:
+                    return []  # 如果已经处理过，直接返回空列表避免无限递归
+                processed_refs.add(schema_name)  # 添加到已处理集合
+                ref_schema = components.get('schemas', {}).get(schema_name, {})
+                return parse_schema(ref_schema, components, prefix, processed_refs)
+
+        if 'properties' in schema:
+            for type_name, config in TYPE_MAPPING['object'].items():
+                if all(k in schema['properties'] for k in config['child_fields']):
+                    schema['x-display-type'] = type_name
+                    schema['description'] = clean_description(config['description'])
+                    break
+
+            params = []
+            for prop_name, prop in schema['properties'].items():
+                full_name = f"{prefix}.{prop_name}" if prefix else prop_name
+                if prop_name not in FILTER_PARAMS:
+                    # 处理数组类型
+                    if prop.get('type') == 'array' and 'items' in prop:
+                        items_schema = prop['items']
+
+                        # 判断是否需要递归
+                        need_recursion = False
+                        item_type = 'object'  # 默认类型
+
+                        # 判断条件：存在$ref引用 或 包含properties 或 明确是object类型
+                        if '$ref' in items_schema:
+                            need_recursion = True
+                            item_type = 'object'
+                        elif items_schema.get('type') == 'object' or 'properties' in items_schema:
+                            need_recursion = True
+                            item_type = 'object'
+                        else:
+                            item_type = items_schema.get('type', 'object')
+
+                        # 添加当前层级参数
+                        params.append({
+                            "name": full_name,
+                            "type": f"array[{item_type}]",
+                            "description": clean_description(prop.get('description', '')),
+                            "example": prop.get('example', '')
+                        })
+
+                        # 仅当需要递归时处理子元素
+                        if need_recursion:
+                            params.extend(parse_schema(items_schema, components, full_name, processed_refs))
+                    else:
+                        prop_params = parse_schema(prop, components, full_name, processed_refs)
+                        if isinstance(prop_params, list):
+                            params.extend(prop_params)
+                        else:
+                            params.append({
+                                "name": full_name,
+                                "type": prop.get('type', 'string'),
+                                "description": clean_description(prop.get('description', '')),
+                                "example": prop.get('example', '')
+                            })
+            return params
+
+    return [
+        {
+            "name": prefix,
+            "type": schema.get('type', 'string'),
+            "description": clean_description(schema.get('description', '')),
+            "example": schema.get('example', '')
+        }
+    ]
+
+def extract_api_info(openapi_data, api_url, method):
+    """📦 接口信息提取（完整实现）"""
+    components = openapi_data.get('components', {})
+    path_config = openapi_data.get('paths', {}).get(api_url)
+    if not path_config:
+        return None
+    config = path_config.get(method.lower())
+    if not config:
+        return None
+    
+    api_info = {
+        "url": api_url,
+        "method": method,
+        "summary": clean_description(config.get('summary', '')),
+        "request_params": [],
+        "response_params": []
+    }
+    
+    # 处理普通参数
+    filtered_params = [
+        param for param in config.get('parameters', [])
+        if not (param['in'] == 'header' and param['name'] in ['Authorization', 'AuthType'])
+    ]
+    for param in filtered_params:
+        if param['name'] not in FILTER_PARAMS:
+            # 处理描述中的特殊符号
+            description = clean_description(param.get('description', ''))
+            
+            # 处理枚举值
+            if 'enum' in param['schema']:
+                enum_values = ', '.join(param['schema']['enum'])
+                description = f"{description} 可选值: {enum_values}"
+            
+            api_info['request_params'].append({
+                "name": param['name'],
+                "type": param['schema'].get('type', 'string'),
+                "description": description,
+                "example": param.get('example', '')
+            })
+    
+    # 处理请求体参数
+    request_body = config.get('requestBody', {})
+    for mime_type, media_type in request_body.get('content', {}).items():
+        if mime_type == 'application/json':
+            schema = media_type.get('schema', {})
+            if schema.get('type') == 'array' and schema.get('items', {}).get('type') == 'string':
+                # 处理字符串数组类型
+                description = clean_description(schema.get('description') or 'ID集合')
+                api_info['request_params'].append({
+                    "name": "[]",
+                    "type": "array",
+                    "description": description,
+                    "example": ["11111"]
+                })
+            else:
+                # 处理普通对象类型
+                schema = parse_schema(schema, components)
+                api_info['request_params'].extend(schema)
+    
+    # 处理响应
+    for status_code, response in config.get('responses', {}).items():
+        if status_code == '200':
+            resp_schema = {}
+            for mime_type, media_type in response.get('content', {}).items():
+                if mime_type == 'application/json':
+                    schema = media_type.get('schema', {})
+                    if '$ref' in schema:
+                        # 处理$ref引用
+                        ref_path = schema['$ref'].split('/')
+                        if len(ref_path) >= 4 and ref_path[2] == 'schemas':
+                            schema_name = ref_path[-1]
+                            schema = components.get('schemas', {}).get(schema_name, {})
+                    resp_schema = parse_schema(schema, components)
+            api_info['response_params'].extend(resp_schema)
+    
+    return api_info
+
+def generate_design(openapi_file, host, port, user, password, db, api_configs, output_dir=None):
+    """🚀 文档生成主流程（完整实现）"""
+    try:
+        with open(openapi_file, 'r', encoding='utf-8') as f:
+            openapi_data = json.load(f)
+    except Exception as e:
+        raise ValueError(f"文件加载失败: {str(e)}")
+    
+    # 修改调用方式，传递所有必要参数
+    all_tables = parse_sql_file(host, port, user, password, db)
+    
+    env = Environment(loader=FileSystemLoader('.'), 
+                     trim_blocks=True, 
+                     lstrip_blocks=True)
+    template = env.from_string(DESIGN_TEMPLATE)
+    
+    for config in api_configs:
+        title = config['title']
+        function_summary = config['function_summary']
+        output_file = config['output_file']
+        
+        # 如果指定了输出目录，则修改输出路径
+        if output_dir:
+            output_file = os.path.join(output_dir, os.path.basename(output_file))
+        
+        api_infos = []
+        for api in config['apis']:
+            api_url = api['api_url']
+            method = api['method']
+            api_info = extract_api_info(openapi_data, api_url, method)
+            if api_info:
+                api_infos.append(api_info)
+            else:
+                print(f"❌ 未找到接口信息: {api_url} {method}")
+        
+        tables = []
+        for table_name in config.get('tables', []):
+            for table in all_tables:
+                if table['name'] == table_name:
+                    tables.append(table)
+                    break
+        
+        if api_infos:
+            try:
+                # 确保输出目录存在
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir)
+                
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    f.write(template.render(
+                        title=title,
+                        function_summary=function_summary,
+                        api_infos=api_infos,
+                        tables=tables
+                    ))
+                print(f"✅ 文档生成成功: {output_file}")
+            except IOError as e:
+                print(f"❌ 文件写入失败: {str(e)}")
+
+# ==================== 入口函数 ====================
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="OpenAPI设计文档生成器")
+    parser.add_argument("--openapi", required=True, help="OpenAPI规范文件路径")
+    parser.add_argument("--host", required=True, help="数据库主机地址")
+    parser.add_argument("--port", type=int, required=True, help="数据库端口")
+    parser.add_argument("--user", required=True, help="数据库用户名")
+    parser.add_argument("--password", required=True, help="数据库密码")
+    parser.add_argument("--db", required=True, help="数据库名称")
+    parser.add_argument("--config", required=True, help="配置文件路径，JSON格式")
+    # 新增输出目录参数
+    parser.add_argument("--output-dir", help="输出目录路径")
+    args = parser.parse_args()
+    
+    try:
+        with open(args.config, 'r', encoding='utf-8') as f:
+            api_configs = json.load(f)
+        
+        generate_design(
+            openapi_file=args.openapi,
+            host=args.host,
+            port=args.port,
+            user=args.user,
+            password=args.password,
+            db=args.db,
+            api_configs=api_configs,
+            output_dir=args.output_dir  # 传递输出目录参数
+        )
+    except Exception as e:
+        print(f"❌ 生成失败: {str(e)}")
+        exit(1)
+
+
+def resolve_ref(ref, components):
+    """递归解析$ref引用"""
+    if not ref.startswith('#/components/'):
+        return {}
+    
+    parts = ref.split('/')
+    current = components
+    for part in parts[2:]:
+        current = current.get(part, {})
+    return current
+
+def process_schema(schema, components):
+    memo = memo or set()
+    """递归处理schema"""
+    if '$ref' in schema:
+        ref = schema['$ref']
+        if ref in memo:
+            return {}  # 遇到已处理过的引用直接返回
+        memo.add(ref)
+        ref_schema = resolve_ref(schema['$ref'], components)
+        return process_schema(ref_schema, components)
+    
+    result = {}
+    if 'properties' in schema:
+        for prop_name, prop_schema in schema['properties'].items():
+            if '$ref' in prop_schema:
+                ref_schema = resolve_ref(prop_schema['$ref'], components)
+                result[prop_name] = process_schema(ref_schema, components)
+            else:
+                result[prop_name] = {
+                    'type': prop_schema.get('type', ''),
+                    'description': prop_schema.get('description', ''),
+                    'items': process_schema(prop_schema.get('items', {}), components)
+                    if prop_schema.get('type') == 'array' else None
+                }
+    return result
+
+def generate_params(schema, components, prefix=''):
+    """递归生成参数表"""
+    params = []
+    if not schema:
+        return params
+    
+    for name, prop in schema.items():
+        full_name = f"{prefix}.{name}" if prefix else name
+        if prop.get('items'):
+            # 处理数组类型
+            params.append({
+                'name': full_name,
+                'description': prop['description'],
+                'type': f"array[{prop['items']['type']}]",
+                'example': ''
+            })
+            # 递归处理数组元素
+            params.extend(generate_params(prop['items'], components, full_name))
+        elif isinstance(prop, dict) and 'type' in prop:
+            # 基本类型
+            params.append({
+                'name': full_name,
+                'description': prop['description'],
+                'type': prop['type'],
+                'example': ''
+            })
+        else:
+            # 嵌套对象
+            params.extend(generate_params(prop, components, full_name))
+    
+    return params
+
+# 在生成API文档的部分，修改为使用新的处理逻辑
+def generate_api_doc(api_info, components):
+    # 处理请求参数
+    request_params = []
+    if 'requestBody' in api_info:
+        content = api_info['requestBody']['content']
+        for media_type, media_schema in content.items():
+            schema = media_schema['schema']
+            processed_schema = process_schema(schema, components)
+            request_params = generate_params(processed_schema, components)
+    
+    # 处理响应参数
+    response_params = []
+    if 'responses' in api_info:
+        for status_code, response in api_info['responses'].items():
+            if 'content' in response:
+                content = response['content']
+                for media_type, media_schema in content.items():
+                    schema = media_schema['schema']
+                    processed_schema = process_schema(schema, components)
+                    response_params = generate_params(processed_schema, components)

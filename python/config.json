@@ -1,0 +1,15 @@
+ [
+    {
+        "title": " 详细设计",
+        "function_summary": "详细设计描述",
+        "output_file": "详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/resource-group",
+                "method": "POST"
+            }
+        ],
+        "tables": ["table1"]
+    } 
+    }
+]

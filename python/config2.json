@@ -1,0 +1,1164 @@
+[
+    {
+        "title": "配置应用信息",
+        "function_summary": "应用信息同步cmdb，包含云上云下资源，确保数据更新的有效性。",
+        "output_file": "配置应用信息详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/resources/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/resources/group",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/resources/software",
+                "method": "POST"
+            }
+        ]
+    },
+    {
+        "title": "javacore快照配置详细设计",
+        "function_summary": "支持配置liberty、IBM-JDK等类型、进程关键字、执行频率、次数等参数，实现javacore快照打印。",
+        "output_file": "javacore快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "proc快照配置详细设计",
+        "function_summary": "支持配置名称、执行频率、次数等参数，实现proc快照打印。",
+        "output_file": "proc快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "nmon快照配置详细设计",
+        "function_summary": "支持配置日期、路径等参数，实现nmon快照打印。",
+        "output_file": "nmon快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "gc快照配置详细设计",
+        "function_summary": "配置gc执行路径，实现gc信息快照打印",
+        "output_file": "gc快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "tcpdump快照配置详细设计",
+        "function_summary": "预置端口监听、IP监听、端口IP监听等执行类型、持续时间、端口号、IP等参数，实现tcpdump快照打印。",
+        "output_file": "tcpdump快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "strace快照配置详细设计",
+        "function_summary": "配置进程关键字、持续时间等参数，实现strace快照打印。",
+        "output_file": "strace快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "pidstat快照配置详细设计",
+        "function_summary": "支持配置进程关键字、pid号、执行频率、次数等参数，实现pidstat快照打印。",
+        "output_file": "pidstat快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "heapdump快照配置详细设计",
+        "function_summary": "支持配置liberty、IBM-JDK等类型、进程关键字、执行频率、次数等参数，实现heapdump快照打印",
+        "output_file": "heapdump快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/check",
+                "method": "POST"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "文件快照配置详细设计",
+        "function_summary": "配置应用信息、快照文件路径、名称、关键字、时间等信息，实现应用内如日志、配置文件等文件的快照。例如可获取指定时间范围指定关键字的日志文件快照信息，且快照信息包括基础的关键字聚合数据；可获取配置文件快照，且快照信息包含配置文件版本数据等场景。",
+        "output_file": "文件快照配置详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{snapType}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/{jobId}/tail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/all",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/default/{id}",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/{id}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/createby",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/slowsql/detail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test/slowsql",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/download/{snapshotId}",
+                "method": "GET"
+            }
+        ],
+        "tables": ["power_snapshot_type", "power_snapshot_type_temp","power_snapshot_type_user","power_snapshot_type_approve"]
+
+    },
+    {
+        "title": "对接监控中心详细设计",
+        "function_summary": " 对接监控中心，对特定告警信息，如某项参数超出阈值，则主动从监控报警队列获取告警信息，打印现场快照。 ",
+        "output_file": "对接监控中心详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/start-stop",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/detail/{taskId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/validate",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/user",
+                "method": "GET"
+            }
+        ],
+        "tables": ["snapshot_task_alarm", "snapshot_task_configured","snapshot_task_configured_detail","snapshot_task_configured_info","power_snapshot_type_user"]
+
+    }
+,
+    {
+        "title": "快照管理详细设计",
+        "function_summary": " 支持快照查看、删除等功能，支持快照备份策略配置 ",
+        "output_file": "快照管理详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/{parentInfoId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/batch",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/file",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/file/download",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/batch/delete",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/slowsql/detail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test/slowsql",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/download/{snapshotId}",
+                "method": "GET"
+            }
+        ],
+        "tables": ["snapshot_execute_info", "snapshot_execute_info_detail" ]
+
+    },
+    {
+        "title": "快照历史详细设计",
+        "function_summary": " 支持查看所有快照历史，方便问题跟踪 ",
+        "output_file": "快照历史详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-strategy",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-strategy",
+                "method": "PUT"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-strategy",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-strategy/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-strategy/detail/{strategyId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/detail/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/detail/{parentInfoId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/detail/batch",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/detail/file",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/file/download",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/batch/delete",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-backup-history/user",
+                "method": "GET"
+            }
+        ],
+        "tables": ["snapshot_backup_strategy", "snapshot_backup_strategy_main","snapshot_backup_strategy_detail" ]
+
+    },
+    {
+        "title": "快照上传详细设计",
+        "function_summary": "云上节点在云平台里完成快照文件上传至HDFS，实现长期持久化的保存。云下服务器，建议使用ansible自动执行脚本进行快照打印并上传HDFS。所有快照都保存至HDFS",
+        "output_file": "快照上传详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/{parentInfoId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/batch",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/file",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/file/download",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/batch/delete",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/slowsql/detail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test/slowsql",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/download/{snapshotId}",
+                "method": "GET"
+            }
+        ],
+        "tables": ["snapshot_execute_info", "snapshot_execute_info_detail" ]
+
+    },
+    {
+        "title": "快照下载详细设计",
+        "function_summary": "高密故障快照执行完成后会上送至HDFS，实现长期持久化的保存。用户可通过快照历史页面查询下载历史打印的快照",
+        "output_file": "快照下载详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/page",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/{parentInfoId}",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/batch",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/detail/file",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/file/download",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-execute-info/batch/delete",
+                "method": "DELETE"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/slowsql/detail",
+                "method": "GET"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-type-temps/test/slowsql",
+                "method": "POST"
+            },
+            {
+                "api_url": "/api/rest/v1/snapshot-types/base/download/{snapshotId}",
+                "method": "GET"
+            }
+        ],
+        "tables": ["snapshot_execute_info", "snapshot_execute_info_detail" ]
+
+    },
+    {
+        "title": "联机快照详细设计",
+        "function_summary": "基于以上快照类型联机获取多个（支持云上、云下）应用的快照，全面覆盖以上单类型快照。",
+        "output_file": "联机快照详细设计.md",
+        "apis": [
+            {
+                "api_url": "/api/rest/v1/snapshot-task-configured/print-now",
+                "method": "POST"
+            }
+        ],
+        "tables": ["snapshot_execute_info", "snapshot_execute_info_detail"  ]
+    }
+]
