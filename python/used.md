@@ -1,3 +1,23 @@
+# 环境准备
+Python 3.6+
+
+Python venv
+The project code and dependencies can be used based on python virtualenv.
+
+Create a new python virtualenv:
+
+> python3 -m venv venv
+Or in Anaconda
+
+conda create --name md_to_conf python=3.7 --yes
+Make the virtualenv active:
+
+> source venv/bin/activate
+Dependencies
+Required python dependencies can be installed using:
+
+pip3 install -r requirements.txt
+
 # 数据准备
 
 ## config.json
