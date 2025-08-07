@@ -1,4 +1,4 @@
-md_toconf来源:https://gitcode.com/gh_mirrors/md/md_to_conf.git
+md_toconf来源:https://github.com/RittmanMead/md_to_conf
 
 [快速生成详细设计接口文档说明](python\used.md)
 
